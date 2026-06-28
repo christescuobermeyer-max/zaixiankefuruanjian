@@ -1,0 +1,40 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build output
+dist/
+build/
+coverage/
+*.tsbuildinfo
+
+# Tauri / Rust output
+apps/desktop/src-tauri/target/
+target/
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*private*
+*secret*
+*.p8
+*.p12
+*.sig
+
+# Local sensitive source document retained outside version control
+初始需求
+初始/
+
+# Logs and local state
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

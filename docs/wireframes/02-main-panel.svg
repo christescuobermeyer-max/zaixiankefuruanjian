@@ -1,0 +1,104 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="600" viewBox="0 0 760 600" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <style>
+      .frame{fill:#fff;stroke:#9aa3ad;stroke-width:1.5}
+      .box{fill:#f4f6f8;stroke:#c2c9d1;stroke-width:1.2}
+      .sidebar{fill:#f7f9fb;stroke:#d3d9df;stroke-width:1.2}
+      .field{fill:#fff;stroke:#b4bcc4;stroke-width:1.2}
+      .btn{fill:#e8eef6;stroke:#7d8a99;stroke-width:1.4}
+      .bubbleU{fill:#e8eef6;stroke:#aab6c4;stroke-width:1}
+      .bubbleA{fill:#f1f3f5;stroke:#cdd3da;stroke-width:1}
+      .convAct{fill:#e3ebf5;stroke:#9bb0c8;stroke-width:1.2}
+      .conv{fill:#fff;stroke:#dce1e7;stroke-width:1}
+      .t{fill:#3a4250;font-size:13px}
+      .tm{fill:#5a636e;font-size:12px}
+      .ts{fill:#8a929c;font-size:11px}
+      .th{fill:#2b313b;font-size:14px;font-weight:600}
+      .ph{fill:#9aa3ad;font-size:12px}
+      .ico{fill:none;stroke:#7d8a99;stroke-width:1.5}
+    </style>
+  </defs>
+
+  <rect x="0" y="0" width="760" height="600" fill="#eef1f4"/>
+  <text x="20" y="22" class="ts">线框图 02 · 主界面（顶部下拉聊天面板，吸附屏幕顶部居中，宽 720px）</text>
+
+  <!-- screen top edge indicator -->
+  <line x1="20" y1="34" x2="740" y2="34" stroke="#c2c9d1" stroke-dasharray="4 4"/>
+  <text x="380" y="48" class="ts" text-anchor="middle">▲ 屏幕顶部边缘（面板从此下滑）</text>
+
+  <!-- panel frame -->
+  <rect class="frame" x="20" y="56" width="720" height="500" rx="10"/>
+
+  <!-- title bar -->
+  <rect class="box" x="20" y="56" width="720" height="44" rx="10"/>
+  <circle cx="44" cy="78" r="9" class="box"/>
+  <path d="M38 78 h12 M44 72 v12" class="ico"/>
+  <text x="64" y="83" class="th">外卖在线客服助手</text>
+  <!-- pin + hide controls -->
+  <circle cx="664" cy="78" r="11" class="conv"/>
+  <text x="664" y="82" class="ts" text-anchor="middle">📌</text>
+  <text x="660" y="98" class="ts" text-anchor="middle">固定</text>
+  <circle cx="700" cy="78" r="11" class="conv"/>
+  <path d="M695 78 h10" class="ico"/>
+  <text x="700" y="98" class="ts" text-anchor="middle">隐藏</text>
+
+  <!-- sidebar : conversation list -->
+  <rect class="sidebar" x="20" y="100" width="220" height="456"/>
+  <rect class="btn" x="34" y="114" width="192" height="34" rx="7"/>
+  <text x="130" y="135" class="t" text-anchor="middle" font-weight="600">＋ 新建对话</text>
+  <text x="34" y="170" class="ts">对话（按店铺名区分）</text>
+
+  <!-- conversation items -->
+  <rect class="convAct" x="34" y="180" width="192" height="46" rx="7"/>
+  <text x="46" y="200" class="t" font-weight="600">川味小厨</text>
+  <text x="46" y="216" class="ts">退款咨询 · 刚刚</text>
+
+  <rect class="conv" x="34" y="234" width="192" height="46" rx="7"/>
+  <text x="46" y="254" class="t">幸福麻辣烫</text>
+  <text x="46" y="270" class="ts">催单 · 12:31</text>
+
+  <rect class="conv" x="34" y="288" width="192" height="46" rx="7"/>
+  <text x="46" y="308" class="t">老王烧烤</text>
+  <text x="46" y="324" class="ts">缺漏餐 · 昨天</text>
+
+  <!-- user footer -->
+  <line x1="34" y1="510" x2="226" y2="510" stroke="#dce1e7"/>
+  <circle cx="48" cy="532" r="11" class="box"/>
+  <text x="68" y="530" class="tm">xuxikai886</text>
+  <text x="68" y="544" class="ts">退出登录</text>
+
+  <!-- chat area -->
+  <rect x="240" y="100" width="500" height="456" fill="#fff" stroke="#e3e7eb"/>
+  <!-- chat header -->
+  <text x="260" y="124" class="th">川味小厨</text>
+  <text x="260" y="140" class="ts">已接入 gemini-3.1-flash-lite · 上下文超 8K 自动压缩</text>
+  <line x1="240" y1="150" x2="740" y2="150" stroke="#e3e7eb"/>
+
+  <!-- assistant bubble -->
+  <rect class="bubbleA" x="260" y="166" width="320" height="58" rx="10"/>
+  <text x="274" y="188" class="t">您好，这里是川味小厨客服，请问</text>
+  <text x="274" y="208" class="t">有什么可以帮您？（订单/退款/催单）</text>
+
+  <!-- user bubble (right) -->
+  <rect class="bubbleU" x="420" y="238" width="300" height="40" rx="10"/>
+  <text x="434" y="263" class="t">我的订单少了一份米饭</text>
+
+  <!-- assistant streaming bubble -->
+  <rect class="bubbleA" x="260" y="292" width="360" height="76" rx="10"/>
+  <text x="274" y="314" class="t">非常抱歉给您带来不便！请提供订单号，</text>
+  <text x="274" y="334" class="t">我们将为您核实并按平台流程补偿。</text>
+  <text x="274" y="356" class="ts">▍ 正在输入…（流式渲染中）</text>
+
+  <!-- compaction marker -->
+  <line x1="260" y1="392" x2="720" y2="392" stroke="#d3d9df" stroke-dasharray="3 3"/>
+  <text x="490" y="388" class="ts" text-anchor="middle">— 较早对话已自动摘要压缩 —</text>
+
+  <!-- input area -->
+  <rect class="field" x="260" y="498" width="380" height="44" rx="8"/>
+  <text x="276" y="524" class="ph">输入消息，Enter 发送 / Shift+Enter 换行…</text>
+  <rect class="btn" x="650" y="498" width="74" height="44" rx="8"/>
+  <text x="687" y="525" class="t" text-anchor="middle" font-weight="600">发送</text>
+
+  <!-- annotations -->
+  <text x="34" y="160" class="ts" fill="#7d8a99"></text>
+</svg>

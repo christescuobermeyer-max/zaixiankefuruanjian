@@ -1,0 +1,26 @@
+[
+  {
+    "id": "no-secrets",
+    "constraint": "文档/代码/日志不得出现真实密钥或连接串",
+    "check": "rg -n \"AKIA[0-9A-Z]{16}|mongodb(\\+srv)?://[^\\s:]+:[^\\s@]+@\" . ; test $? -ne 0",
+    "evidence": "secret scan 无命中即通过"
+  },
+  {
+    "id": "unit-tests",
+    "constraint": "核心业务逻辑必须有通过的单元测试",
+    "check": "npm test --silent",
+    "evidence": "测试命令退出码 0"
+  },
+  {
+    "id": "build",
+    "constraint": "项目必须可构建出可交付产物",
+    "check": "npm run build",
+    "evidence": "构建命令退出码 0"
+  },
+  {
+    "id": "env-example-synced",
+    "constraint": "新增环境变量必须同步 .env.example",
+    "check": "test -f .env.example",
+    "evidence": "存在 .env.example；理想情况进一步比对变量名一致"
+  }
+]

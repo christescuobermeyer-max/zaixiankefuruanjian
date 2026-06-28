@@ -1,0 +1,32 @@
+[
+  {
+    "id": "no-real-secrets",
+    "constraint": "文档、源码、测试和脚本不得包含真实密钥、私钥、token 或带口令连接串",
+    "check": "python scripts/harness_checks.py no-secrets",
+    "evidence": "无敏感模式命中"
+  },
+  {
+    "id": "required-harness-docs",
+    "constraint": "项目必须保留 AGENTS.md 和 docs 下的需求、架构、安全、验证、进度文档",
+    "check": "python scripts/harness_checks.py required-files",
+    "evidence": "必需文件存在"
+  },
+  {
+    "id": "env-examples",
+    "constraint": "服务端和客户端环境变量必须使用 .env.example 占位符记录，真实 .env 不入仓",
+    "check": "python scripts/harness_checks.py env-examples",
+    "evidence": ".env.example 变量名完整且 .gitignore 覆盖 .env"
+  },
+  {
+    "id": "agents-links",
+    "constraint": "AGENTS.md 中的项目内文档链接必须指向存在的文件或目录",
+    "check": "python scripts/harness_checks.py docs-links",
+    "evidence": "链接目标存在"
+  },
+  {
+    "id": "planned-structure",
+    "constraint": "项目必须保持 docs、apps/server、apps/desktop、scripts 和 pnpm workspace 边界",
+    "check": "python scripts/harness_checks.py planned-structure",
+    "evidence": "目录和 workspace 配置存在"
+  }
+]

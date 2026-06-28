@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="500" viewBox="0 0 720 500" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <style>
+      .frame{fill:#fff;stroke:#9aa3ad;stroke-width:1.5}
+      .box{fill:#f4f6f8;stroke:#c2c9d1;stroke-width:1.2}
+      .field{fill:#fff;stroke:#7d8a99;stroke-width:1.4}
+      .btn{fill:#e8eef6;stroke:#7d8a99;stroke-width:1.4}
+      .btnGhost{fill:#fff;stroke:#b4bcc4;stroke-width:1.2}
+      .t{fill:#3a4250;font-size:14px}
+      .tm{fill:#5a636e;font-size:13px}
+      .ts{fill:#8a929c;font-size:12px}
+      .th{fill:#2b313b;font-size:17px;font-weight:600}
+      .ph{fill:#9aa3ad;font-size:13px}
+      .ico{fill:none;stroke:#7d8a99;stroke-width:1.6}
+    </style>
+  </defs>
+
+  <rect x="0" y="0" width="720" height="500" fill="#eef1f4"/>
+  <text x="20" y="24" class="ts">线框图 03 · 新建对话弹窗（开启新对话前必填名称，建议填店铺名）</text>
+
+  <!-- dimmed backdrop -->
+  <rect x="20" y="40" width="680" height="440" fill="#3a4250" opacity="0.10" rx="8"/>
+  <text x="360" y="70" class="ts" text-anchor="middle" fill="#7d8a99">（主面板被遮罩，居中弹出对话框）</text>
+
+  <!-- modal -->
+  <rect class="frame" x="200" y="130" width="320" height="252" rx="12"/>
+  <text x="228" y="172" class="th">开启新对话</text>
+  <!-- close -->
+  <path d="M488 158 l12 12 M500 158 l-12 12" class="ico"/>
+
+  <text x="228" y="206" class="tm">对话名称</text>
+  <rect class="field" x="228" y="216" width="264" height="42" rx="7"/>
+  <text x="242" y="242" class="ph">建议直接填写店铺名，如「川味小厨」</text>
+
+  <text x="228" y="282" class="ts">名称用于区分不同店铺的上下文，便于检索。</text>
+
+  <!-- buttons -->
+  <rect class="btnGhost" x="228" y="318" width="120" height="42" rx="8"/>
+  <text x="288" y="344" class="t" text-anchor="middle">取消</text>
+  <rect class="btn" x="372" y="318" width="120" height="42" rx="8"/>
+  <text x="432" y="344" class="t" text-anchor="middle" font-weight="600">创建对话</text>
+
+  <!-- annotations -->
+  <text x="540" y="232" class="ts">① 名称为空时</text>
+  <text x="540" y="248" class="ts">   「创建」禁用</text>
+  <text x="540" y="332" class="ts">② 创建→后端</text>
+  <text x="540" y="348" class="ts">   建 conversation</text>
+</svg>

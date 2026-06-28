@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="480" viewBox="0 0 760 480" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <style>
+      .desktop{fill:#e9edf1;stroke:#cdd3da;stroke-width:1}
+      .icon{fill:#fff;stroke:#7d8a99;stroke-width:1.6}
+      .hot{fill:#dfe8f3;stroke:#9bb0c8;stroke-width:1.2}
+      .tip{fill:#fff;stroke:#9aa3ad;stroke-width:1.4}
+      .t{fill:#3a4250;font-size:13px}
+      .ts{fill:#8a929c;font-size:11px}
+      .th{fill:#2b313b;font-size:13px;font-weight:600}
+      .ico{fill:none;stroke:#7d8a99;stroke-width:1.6}
+      .arrow{fill:none;stroke:#7d8a99;stroke-width:1.4;marker-end:url(#a)}
+    </style>
+    <marker id="a" markerWidth="9" markerHeight="9" refX="6" refY="4" orient="auto">
+      <path d="M0 0 L8 4 L0 8 z" fill="#7d8a99"/>
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="760" height="480" fill="#f4f6f8"/>
+  <text x="20" y="22" class="ts">线框图 04 · 隐藏态 + 顶部热区揭示（Auto-hide / Screen Edge Reveal）</text>
+
+  <!-- desktop screen -->
+  <rect class="desktop" x="40" y="40" width="680" height="400" rx="6"/>
+  <text x="380" y="250" class="ts" text-anchor="middle">Windows 桌面（应用面板默认隐藏在屏幕上方之外）</text>
+
+  <!-- top hot zone strip -->
+  <rect class="hot" x="40" y="40" width="680" height="10"/>
+  <text x="60" y="68" class="ts">① 顶部 2px 热区：鼠标触顶（x 在面板范围内）→ 触发下滑</text>
+
+  <!-- floating icon (hidden state) -->
+  <rect class="icon" x="344" y="40" width="72" height="26" rx="0 0 10 10"/>
+  <circle cx="362" cy="53" r="7" class="icon"/>
+  <path d="M356 53 h12 M362 47 v12" class="ico"/>
+  <text x="384" y="57" class="t">客服</text>
+  <text x="430" y="57" class="ts">② 隐藏态留顶部居中悬浮图标</text>
+
+  <!-- hover tooltip / mini preview -->
+  <path class="arrow" d="M380 70 V 110"/>
+  <rect class="tip" x="300" y="112" width="240" height="92" rx="10"/>
+  <text x="316" y="134" class="th">悬停 200ms → 预览/展开</text>
+  <line x1="316" y1="144" x2="524" y2="144" stroke="#e3e7eb"/>
+  <text x="316" y="166" class="t">▸ 鼠标悬停图标弹出聊天框</text>
+  <text x="316" y="186" class="t">▸ 点击 📌 固定，禁用自动隐藏</text>
+
+  <!-- state machine mini -->
+  <rect class="tip" x="120" y="320" width="520" height="96" rx="10"/>
+  <text x="140" y="344" class="th">状态机</text>
+  <rect class="icon" x="150" y="356" width="120" height="40" rx="8"/>
+  <text x="210" y="381" class="t" text-anchor="middle">HIDDEN 隐藏</text>
+  <path class="arrow" d="M272 366 H 330"/>
+  <text x="301" y="360" class="ts" text-anchor="middle">触顶/悬停</text>
+  <rect class="icon" x="332" y="356" width="120" height="40" rx="8"/>
+  <text x="392" y="381" class="t" text-anchor="middle">REVEALED 显示</text>
+  <path class="arrow" d="M332 388 H 274" />
+  <text x="303" y="412" class="ts" text-anchor="middle">失焦/离开 400ms</text>
+  <rect class="icon" x="490" y="356" width="120" height="40" rx="8"/>
+  <text x="550" y="381" class="t" text-anchor="middle">PINNED 固定</text>
+  <path class="arrow" d="M454 372 H 488"/>
+  <text x="471" y="350" class="ts" text-anchor="middle">📌</text>
+</svg>

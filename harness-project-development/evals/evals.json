@@ -1,0 +1,164 @@
+{
+  "skill_name": "harness-project-development",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "我有一个新项目需求：做一个 Tauri 桌面工具，让外卖运营人员选择店铺后自动读取平台数据、生成日报，并支持后续扩展到美团和淘宝闪购。请按 Harness Engineering 帮我梳理开发流程，并把项目约束写入 AGENTS.md。",
+      "expected_output": "应该提取业务需求，生成具体项目约束，提出简短的 AGENTS.md 地图，把详细文档拆到 docs/，包含安全、RPA、测试、验证门禁，并避免在约束明确前进入实现。",
+      "files": [],
+      "rubric": {
+        "must_include": [
+          "约束",
+          "docs/",
+          "安全",
+          "验证",
+          "AGENTS.md"
+        ],
+        "must_avoid": []
+      }
+    },
+    {
+      "id": 2,
+      "prompt": "我想复刻一个已有 Electron 店铺绑定系统，现有文档很乱，还有一些历史功能归档。请先帮我建立 Harness Engineering 约束，然后规划如何开发新版本。",
+      "expected_output": "应该要求先读取现有文档和代码，识别权威事实来源，围绕 Electron IPC、preload、renderer、Cookie、密钥生成约束，更新 AGENTS.md，并产出 docs、plans、verification 相关内容。",
+      "files": [],
+      "rubric": {
+        "must_include": [
+          "事实来源",
+          "验证",
+          "AGENTS.md"
+        ],
+        "must_avoid": []
+      }
+    },
+    {
+      "id": 3,
+      "prompt": "给现有项目新增一个外部平台自动化功能，可以直接抓包写接口吗？请按 Harness Engineering 处理。",
+      "expected_output": "应该禁止探索阶段直接真实写入，要求只读探针，分类 API/RPA/混合流程，脱敏证据，把约束写入 AGENTS.md 和 docs，要求安全审查、TDD 计划，以及真实操作前人工确认。",
+      "files": [],
+      "rubric": {
+        "must_include": [
+          "只读",
+          "脱敏",
+          "人工确认"
+        ],
+        "must_avoid": []
+      }
+    },
+    {
+      "id": 4,
+      "prompt": "我准备让多个 agent 连续几天开发一个完整项目。请按 Harness Engineering 先建立约束、反馈机制和交接文档，避免 agent 每次都重新理解项目或过早说完成。",
+      "expected_output": "应该创建业务和架构约束，把每条硬约束映射到反馈机制，要求 AGENTS.md 保持短地图，创建 docs、plans、verification 文档，维护 task_plan.md 或进度交接文档，并拒绝没有证据的完成声明。",
+      "files": [],
+      "rubric": {
+        "must_include": [
+          "反馈机制",
+          "交接",
+          "AGENTS.md"
+        ],
+        "must_avoid": []
+      }
+    },
+    {
+      "id": 5,
+      "prompt": "我已经确认好了开发文档，现在想让多个 agent 并发写代码。请按 Harness Engineering 拆分并发任务，但不要在需求外新增功能，最后要合并验收。",
+      "expected_output": "应该先确认开发文档和验收标准已确定，再用 Superpowers 多 agent 并发流程拆分互不冲突的任务，明确每个子代理的文件边界、测试命令和交付格式；并要求合并后 review、运行局部和整体验证、对照原始需求验收，确认没有擅自新增无关功能后才能声明完成。",
+      "files": [],
+      "rubric": {
+        "must_include": [
+          "开发文档",
+          "边界",
+          "合并",
+          "验收"
+        ],
+        "must_avoid": []
+      }
+    },
+    {
+      "id": 6,
+      "prompt": "同一个功能已经修了三次还是没有达到我要的最终效果。请按 Harness Engineering 停下来重新梳理流程，找出哪里有问题，并向我提问确认后再继续。",
+      "expected_output": "应该停止继续盲目修改，明确最终结果验收标准，复盘需求、设计、计划、实现、测试、验证、环境和交互流程，定位可能出问题的环节；必须向用户提问重新确认目标结果、失败现象、可接受方案和优先级，然后再制定下一步修复计划，并以用户要的最终结果作为验收标准。",
+      "files": [],
+      "rubric": {
+        "must_include": [
+          "最终结果",
+          "复盘",
+          "提问"
+        ],
+        "must_avoid": []
+      }
+    },
+    {
+      "id": 7,
+      "prompt": "我现在在一个空的项目目录里，只给你一句初始需求：做一个可以让运营同学管理店铺和日报的桌面工具。请按 Harness Engineering 先把这个项目初始化起来，创建必要的 AGENTS.md 和开发文档，再告诉我下一步怎么做。",
+      "expected_output": "应该先读取当前目录状态，提炼业务需求，写出项目约束和最终结果验收标准，创建或更新 AGENTS.md，建立 docs/project-context.md、docs/requirements.md、docs/architecture.md、docs/security.md、docs/verification.md、docs/plans/、docs/memory/ 等初始化文档骨架，并避免直接进入代码实现；最终回复前写入带日期时间文件名的记忆文档。",
+      "files": [],
+      "rubric": {
+        "must_include": [
+          "业务需求",
+          "docs/",
+          "记忆",
+          "AGENTS.md"
+        ],
+        "must_avoid": []
+      }
+    },
+    {
+      "id": 8,
+      "prompt": "这是一个小任务：把 AGENTS.md 里的一个文档链接改成新的路径。请按 harness-project-development 处理，但不要搞复杂流程。",
+      "expected_output": "应该识别这是小任务，不启动多 agent 编排，也不强行走完整项目初始化流程；只读取相关文件、修改链接、做最小验证。同时不能凭空新增业务约束，任何约束或说明都必须能追溯到用户这次小任务的完整表达或现有文件事实。",
+      "files": [],
+      "rubric": {
+        "must_include": [
+          "小任务",
+          "最小验证"
+        ],
+        "must_avoid": []
+      }
+    },
+    {
+      "id": 9,
+      "prompt": "这次对话已经完成了需求梳理和 AGENTS.md 初始化，请按 harness-project-development 收尾并留下记忆，方便下次新对话接着做。",
+      "expected_output": "应该在最终回复前创建或更新 docs/memory/YYYY-MM-DD-HHmm-<topic>.md 形式的记忆文档，文件名展示当前日期和时间；内容记录用户需求、本次理解、已完成事项、未完成事项、修改文件、验证证据、需求与约束变化、下一步和风险。不得把真实密钥或未确认想法写成事实。",
+      "files": [],
+      "rubric": {
+        "must_include": [
+          "docs/memory/",
+          "验证证据",
+          "下一步"
+        ],
+        "must_avoid": []
+      }
+    },
+    {
+      "id": 10,
+      "prompt": "我要开始一个云端 API 项目，涉及登录、密钥和外部平台抓包。请按 harness-project-development 开始，并告诉我会用到哪些 skill。",
+      "expected_output": "应该先读取本 skill 目录下的 superpowers-agents-guidelines.md 再判断路由；按无前缀命名引用 skill（如 brainstorming、writing-plans、test-driven-development、systematic-debugging、verification-before-completion）；对项目初始化路由到 project-analyzer，对认证/密钥/外部平台抓包路由到 security-auditor；不引用不存在或带 superpowers- 前缀但与 guidelines 不一致的 skill 名。",
+      "files": [],
+      "rubric": {
+        "must_include": [
+          "superpowers-agents-guidelines",
+          "project-analyzer",
+          "security-auditor",
+          "brainstorming"
+        ],
+        "must_avoid": [
+          "superpowers-brainstorming"
+        ]
+      }
+    },
+    {
+      "id": 11,
+      "prompt": "这次对话要收尾并写记忆文档，文件名需要当前日期时间。请按 harness-project-development 处理。",
+      "expected_output": "应该用系统命令实时获取时间（如 date 或 Get-Date）来构造 docs/memory/YYYY-MM-DD-HHmm-<topic>.md 文件名，而不是凭记忆或推测填日期；并写入用户需求、完成情况、验证证据、未完成事项和下一步。",
+      "files": [],
+      "rubric": {
+        "must_include": [
+          "date",
+          "docs/memory/"
+        ],
+        "must_avoid": []
+      }
+    }
+  ]
+}

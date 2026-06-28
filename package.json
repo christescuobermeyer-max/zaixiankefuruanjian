@@ -1,0 +1,9 @@
+{
+  "name": "zaixiankefuruanjian",
+  "private": true,
+  "packageManager": "pnpm@9.15.0",
+  "scripts": {
+    "verify": "python scripts/verify.py",
+    "check:constraints": "python scripts/verify.py"
+  }
+}
