@@ -47,6 +47,27 @@ export async function listConversations(
   return docs.map(toConversationDto);
 }
 
+export async function searchConversations(
+  store: ConversationStore,
+  userId: string,
+  query: string
+): Promise<ConversationDto[]> {
+  const keyword = query.trim();
+  if (!keyword) {
+    return [];
+  }
+
+  const docs = await store
+    .conversations()
+    .find({
+      userId,
+      name: { $regex: escapeRegex(keyword), $options: "i" }
+    } as never)
+    .sort({ updatedAt: -1 })
+    .toArray();
+  return docs.map(toConversationDto);
+}
+
 export async function listMessages(
   store: ConversationStore,
   userId: string,
@@ -105,4 +126,8 @@ export function toMessageDto(doc: MessageDocument): MessageDto {
     tokens: doc.tokens,
     createdAt: doc.createdAt.toISOString()
   };
+}
+
+function escapeRegex(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }

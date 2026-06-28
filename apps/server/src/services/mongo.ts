@@ -53,6 +53,7 @@ export function createMongoService(options: MongoServiceOptions = {}): MongoServ
     async ensureIndexes() {
       const db = await getDb();
       await db.collection("conversations").createIndex({ userId: 1, updatedAt: -1 });
+      await db.collection("conversations").createIndex({ userId: 1, name: 1, updatedAt: -1 });
       await db.collection("messages").createIndex({ conversationId: 1, createdAt: 1 });
       await db.collection("messages").createIndex({ userId: 1, createdAt: -1 });
     }

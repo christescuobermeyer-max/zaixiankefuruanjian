@@ -4,7 +4,8 @@ import {
   createConversation,
   deleteConversation,
   listConversations,
-  listMessages
+  listMessages,
+  searchConversations
 } from "./conversation-service.js";
 import type { ConversationDocument, MessageDocument } from "../types/domain.js";
 
@@ -20,9 +21,9 @@ class MemoryCollection<T extends { _id: ObjectId }> {
     return { insertedId: doc._id };
   }
 
-  find(query: Partial<T>) {
+  find(query: Record<string, unknown>) {
     const matches = this.items.filter((item) =>
-      Object.entries(query).every(([key, value]) => String(item[key as keyof T]) === String(value))
+      Object.entries(query).every(([key, value]) => matchesQueryValue(item[key as keyof T], value))
     );
     return {
       sort(sortSpec: Record<string, 1 | -1>) {
@@ -37,28 +38,28 @@ class MemoryCollection<T extends { _id: ObjectId }> {
     };
   }
 
-  async findOne(query: Partial<T>) {
+  async findOne(query: Record<string, unknown>) {
     return (
       this.items.find((item) =>
-        Object.entries(query).every(([key, value]) => String(item[key as keyof T]) === String(value))
+        Object.entries(query).every(([key, value]) => matchesQueryValue(item[key as keyof T], value))
       ) ?? null
     );
   }
 
-  async deleteOne(query: Partial<T>) {
+  async deleteOne(query: Record<string, unknown>) {
     const before = this.items.length;
     this.items = this.items.filter(
       (item) =>
-        !Object.entries(query).every(([key, value]) => String(item[key as keyof T]) === String(value))
+        !Object.entries(query).every(([key, value]) => matchesQueryValue(item[key as keyof T], value))
     );
     return { deletedCount: before - this.items.length };
   }
 
-  async deleteMany(query: Partial<T>) {
+  async deleteMany(query: Record<string, unknown>) {
     const before = this.items.length;
     this.items = this.items.filter(
       (item) =>
-        !Object.entries(query).every(([key, value]) => String(item[key as keyof T]) === String(value))
+        !Object.entries(query).every(([key, value]) => matchesQueryValue(item[key as keyof T], value))
     );
     return { deletedCount: before - this.items.length };
   }
@@ -75,6 +76,14 @@ function buildStore() {
       messages: () => messages as never
     }
   };
+}
+
+function matchesQueryValue(actual: unknown, expected: unknown): boolean {
+  if (expected && typeof expected === "object" && "$regex" in expected) {
+    const regexQuery = expected as { $regex: string; $options?: string };
+    return new RegExp(regexQuery.$regex, regexQuery.$options).test(String(actual));
+  }
+  return String(actual) === String(expected);
 }
 
 describe("conversation service", () => {
@@ -99,6 +108,29 @@ describe("conversation service", () => {
     const list = await listConversations(store, "user-1");
 
     expect(list.map((item) => item.name)).toEqual(["new", "old"]);
+  });
+
+  it("searches current user's conversations by name newest first", async () => {
+    const { conversations, store } = buildStore();
+    conversations.items.push(
+      doc("user-1", "川味小厨", new Date("2026-01-01")),
+      doc("user-1", "川味烧烤", new Date("2026-01-03")),
+      doc("user-1", "粤式茶餐厅", new Date("2026-01-04")),
+      doc("user-2", "川味他人店", new Date("2026-01-05"))
+    );
+
+    const results = await searchConversations(store, "user-1", " 川味 ");
+
+    expect(results.map((item) => item.name)).toEqual(["川味烧烤", "川味小厨"]);
+  });
+
+  it("returns an empty list for blank conversation search terms", async () => {
+    const { conversations, store } = buildStore();
+    conversations.items.push(doc("user-1", "川味小厨", new Date("2026-01-01")));
+
+    const results = await searchConversations(store, "user-1", "   ");
+
+    expect(results).toEqual([]);
   });
 
   it("returns messages only when the conversation belongs to user", async () => {

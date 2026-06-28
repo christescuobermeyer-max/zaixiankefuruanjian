@@ -42,6 +42,19 @@ function fakeService() {
         updatedAt: "2026-01-01T00:00:00.000Z"
       }
     ],
+    searchConversations: async (_userId: string, query: string): Promise<ConversationDto[]> =>
+      query.trim()
+        ? [
+            {
+              id: "conv-1",
+              name: "川味小厨",
+              summary: "",
+              tokenCount: 0,
+              createdAt: "2026-01-01T00:00:00.000Z",
+              updatedAt: "2026-01-01T00:00:00.000Z"
+            }
+          ]
+        : [],
     listMessages: async (): Promise<MessageDto[] | null> => [
       {
         id: "msg-1",
@@ -100,6 +113,28 @@ describe("conversations routes", () => {
     expect(messagesRes.status).toBe(200);
     expect(await listRes.json()).toHaveLength(1);
     expect(await messagesRes.json()).toHaveLength(1);
+  });
+
+  it("searches conversations by name for authenticated users", async () => {
+    const app = buildApp();
+
+    const res = await app.request("/api/conversations/search?q=%E5%B7%9D%E5%91%B3", {
+      headers: { Authorization: `Bearer ${await token()}` }
+    });
+
+    expect(res.status).toBe(200);
+    expect(await res.json()).toMatchObject([{ id: "conv-1", name: "川味小厨" }]);
+  });
+
+  it("returns an empty search result for blank conversation queries", async () => {
+    const app = buildApp();
+
+    const res = await app.request("/api/conversations/search?q=%20%20", {
+      headers: { Authorization: `Bearer ${await token()}` }
+    });
+
+    expect(res.status).toBe(200);
+    expect(await res.json()).toEqual([]);
   });
 
   it("returns 404 for missing conversation messages", async () => {

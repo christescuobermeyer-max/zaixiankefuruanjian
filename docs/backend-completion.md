@@ -182,7 +182,54 @@ Content-Type: application/json
 }
 ```
 
-### 5.4 获取对话消息
+### 5.4 搜索命名对话
+
+```http
+GET /api/conversations/search?q=<keyword>
+Authorization: Bearer <access_token>
+```
+
+用途：
+- 前端顶部或侧边栏搜索框使用。
+- 根据命名会话的 `name` 字段搜索匹配会话。
+- 点选搜索结果后，前端进入该 conversation，并调用 `GET /api/conversations/:id/messages` 加载历史聊天内容。
+
+规则：
+- 只搜索当前登录用户自己的 conversation。
+- `q` 会 `trim()` 后使用。
+- 空关键词返回空数组。
+- 匹配方式为名称包含关键词，大小写不敏感。
+- 结果按 `updatedAt` 倒序返回。
+
+请求示例：
+
+```http
+GET /api/conversations/search?q=川味
+Authorization: Bearer <access_token>
+```
+
+响应：
+
+```json
+[
+  {
+    "id": "668000000000000000000001",
+    "name": "川味小厨",
+    "summary": "",
+    "tokenCount": 32,
+    "createdAt": "2026-06-28T09:00:00.000Z",
+    "updatedAt": "2026-06-28T09:08:00.000Z"
+  }
+]
+```
+
+前端展示建议：
+- 搜索框输入变化时做 200-300ms debounce 后调用该接口。
+- 空输入时清空搜索结果，或回到普通 conversation list。
+- 搜索结果项展示 `name` 和可选的 `updatedAt`。
+- 点击结果后设置 `activeConversationId`，再请求消息历史，用户可以衔接之前聊天继续对话。
+
+### 5.5 获取对话消息
 
 ```http
 GET /api/conversations/:id/messages
@@ -217,7 +264,7 @@ Authorization: Bearer <access_token>
 ]
 ```
 
-### 5.5 删除对话
+### 5.6 删除对话
 
 ```http
 DELETE /api/conversations/:id
@@ -234,7 +281,7 @@ Authorization: Bearer <access_token>
 { "ok": true }
 ```
 
-### 5.6 发送聊天消息
+### 5.7 发送聊天消息
 
 ```http
 POST /api/chat
@@ -446,8 +493,10 @@ type ApiClientOptions = {
 2. 登录后请求 `GET /api/conversations`。
 3. 无对话时调用 `POST /api/conversations` 创建默认对话或展示创建弹窗。
 4. 选中对话后请求 `GET /api/conversations/:id/messages`。
-5. 发送消息时调用 `POST /api/chat`，解析 SSE。
-6. SSE `[DONE]` 后刷新该对话消息列表。
+5. 搜索框输入关键词时调用 `GET /api/conversations/search?q=<keyword>` 展示匹配会话。
+6. 点击搜索结果后设置当前会话，并请求该会话消息历史。
+7. 发送消息时调用 `POST /api/chat`，解析 SSE。
+8. SSE `[DONE]` 后刷新该对话消息列表。
 
 ## 10. curl 对接示例
 
@@ -461,6 +510,13 @@ curl http://127.0.0.1:8787/health
 
 ```bash
 curl http://127.0.0.1:8787/api/conversations \
+  -H "Authorization: Bearer <access_token>"
+```
+
+搜索对话：
+
+```bash
+curl "http://127.0.0.1:8787/api/conversations/search?q=川味" \
   -H "Authorization: Bearer <access_token>"
 ```
 
@@ -492,4 +548,3 @@ curl -N -X POST http://127.0.0.1:8787/api/chat \
 - OSS 环境已连通，但 Tauri 自动更新发布脚本尚未实现。
 - `TAURI_SIGNING_PRIVATE_KEY` 尚未配置，等进入 Tauri updater 阶段再处理。
 - 生产对外访问还需要 HTTPS 域名或反向代理配置；目前云端健康检查验证的是本机 `127.0.0.1:8787`。
-
