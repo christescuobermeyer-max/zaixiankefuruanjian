@@ -3,7 +3,8 @@ import type {
   ConversationDocument,
   ConversationDto,
   MessageDocument,
-  MessageDto
+  MessageDto,
+  ShopStatsDto
 } from "../types/domain.js";
 
 type ConversationStore = {
@@ -66,6 +67,39 @@ export async function searchConversations(
     .sort({ updatedAt: -1 })
     .toArray();
   return docs.map(toConversationDto);
+}
+
+export async function getConversationStats(
+  store: ConversationStore,
+  userId: string,
+  options: { now?: Date; retentionDays?: 60 } = {}
+): Promise<ShopStatsDto> {
+  const retentionDays = options.retentionDays ?? 60;
+  const now = options.now ?? new Date();
+  const cutoff = new Date(now.getTime() - retentionDays * 24 * 60 * 60 * 1000);
+  const expired = await store
+    .conversations()
+    .find({ userId, updatedAt: { $lt: cutoff } } as never)
+    .sort({ updatedAt: 1 })
+    .toArray();
+  const expiredIds = expired.map((item) => item._id);
+
+  if (expiredIds.length > 0) {
+    await store.conversations().deleteMany({ userId, _id: { $in: expiredIds } } as never);
+    await store.messages().deleteMany({ userId, conversationId: { $in: expiredIds } } as never);
+  }
+
+  const active = await store.conversations().find({ userId }).sort({ updatedAt: -1 }).toArray();
+  return {
+    shopCount: active.length,
+    retentionDays,
+    deletedExpiredCount: expiredIds.length,
+    shops: active.map((item) => ({
+      id: item._id.toHexString(),
+      name: item.name,
+      latestUpdatedAt: item.updatedAt.toISOString()
+    }))
+  };
 }
 
 export async function listMessages(

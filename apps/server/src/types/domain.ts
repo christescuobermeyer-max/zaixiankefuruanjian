@@ -31,6 +31,17 @@ export type ConversationDto = {
   updatedAt: string;
 };
 
+export type ShopStatsDto = {
+  shopCount: number;
+  retentionDays: 60;
+  deletedExpiredCount: number;
+  shops: Array<{
+    id: string;
+    name: string;
+    latestUpdatedAt: string;
+  }>;
+};
+
 export type MessageDto = {
   id: string;
   conversationId: string;

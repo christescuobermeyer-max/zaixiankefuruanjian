@@ -229,7 +229,60 @@ Authorization: Bearer <access_token>
 - 搜索结果项展示 `name` 和可选的 `updatedAt`。
 - 点击结果后设置 `activeConversationId`，再请求消息历史，用户可以衔接之前聊天继续对话。
 
-### 5.5 获取对话消息
+### 5.5 账户店铺统计与过期会话清理
+
+```http
+GET /api/conversations/stats
+Authorization: Bearer <access_token>
+```
+
+用途：
+- 前端展示当前账户已存储的店铺数。
+- 返回每个店铺会话在云数据库中的最新更新时间。
+- 每次调用时自动清理当前账户下超过 60 天未更新的店铺会话及其聊天消息。
+
+当前模型约定：
+- 一个命名 conversation 代表一个店铺会话。
+- `conversation.name` 是店铺名称。
+- `conversation.updatedAt` 是该店铺聊天内容最后更新时间。
+- 发送聊天消息后，后端会更新 `conversation.updatedAt`。
+
+清理规则：
+- 以服务端当前时间计算。
+- `updatedAt < now - 60 days` 的 conversation 会被删除。
+- 被删除 conversation 下的 messages 会同步删除。
+- 清理只作用于当前登录用户自己的数据，不影响其他账户。
+
+响应：
+
+```json
+{
+  "shopCount": 2,
+  "retentionDays": 60,
+  "deletedExpiredCount": 1,
+  "shops": [
+    {
+      "id": "668000000000000000000001",
+      "name": "川味小厨",
+      "latestUpdatedAt": "2026-06-28T09:08:00.000Z"
+    },
+    {
+      "id": "668000000000000000000002",
+      "name": "粤式茶餐厅",
+      "latestUpdatedAt": "2026-06-27T18:30:00.000Z"
+    }
+  ]
+}
+```
+
+前端展示建议：
+- 登录后或打开会话管理页时调用该接口。
+- 顶部显示 `shopCount` 作为“当前账户已保存店铺数”。
+- 列表中展示店铺名称和 `latestUpdatedAt`。
+- 若 `deletedExpiredCount > 0`，可刷新普通会话列表，避免前端继续展示已清理的旧会话。
+- 点击某个店铺后继续使用 `GET /api/conversations/:id/messages` 加载历史聊天并衔接对话。
+
+### 5.6 获取对话消息
 
 ```http
 GET /api/conversations/:id/messages
@@ -264,7 +317,7 @@ Authorization: Bearer <access_token>
 ]
 ```
 
-### 5.6 删除对话
+### 5.7 删除对话
 
 ```http
 DELETE /api/conversations/:id
@@ -281,7 +334,7 @@ Authorization: Bearer <access_token>
 { "ok": true }
 ```
 
-### 5.7 发送聊天消息
+### 5.8 发送聊天消息
 
 ```http
 POST /api/chat
@@ -340,6 +393,21 @@ type ConversationDto = {
   tokenCount: number;
   createdAt: string;
   updatedAt: string;
+};
+```
+
+店铺统计接口返回的字段：
+
+```ts
+type ShopStatsDto = {
+  shopCount: number;
+  retentionDays: 60;
+  deletedExpiredCount: number;
+  shops: Array<{
+    id: string;
+    name: string;
+    latestUpdatedAt: string;
+  }>;
 };
 ```
 
@@ -495,8 +563,10 @@ type ApiClientOptions = {
 4. 选中对话后请求 `GET /api/conversations/:id/messages`。
 5. 搜索框输入关键词时调用 `GET /api/conversations/search?q=<keyword>` 展示匹配会话。
 6. 点击搜索结果后设置当前会话，并请求该会话消息历史。
-7. 发送消息时调用 `POST /api/chat`，解析 SSE。
-8. SSE `[DONE]` 后刷新该对话消息列表。
+7. 需要展示账户店铺统计时调用 `GET /api/conversations/stats`，展示店铺数和每个店铺最后更新时间。
+8. 如果统计接口返回 `deletedExpiredCount > 0`，刷新会话列表和当前会话状态。
+9. 发送消息时调用 `POST /api/chat`，解析 SSE。
+10. SSE `[DONE]` 后刷新该对话消息列表。
 
 ## 10. curl 对接示例
 
@@ -517,6 +587,13 @@ curl http://127.0.0.1:8787/api/conversations \
 
 ```bash
 curl "http://127.0.0.1:8787/api/conversations/search?q=川味" \
+  -H "Authorization: Bearer <access_token>"
+```
+
+店铺统计和过期清理：
+
+```bash
+curl http://127.0.0.1:8787/api/conversations/stats \
   -H "Authorization: Bearer <access_token>"
 ```
 

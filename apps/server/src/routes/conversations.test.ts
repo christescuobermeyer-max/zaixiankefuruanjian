@@ -3,7 +3,7 @@ import { Hono } from "hono";
 import { describe, expect, it } from "vitest";
 import { authMiddleware } from "../middleware/auth.js";
 import { createConversationsRoute } from "./conversations.js";
-import type { ConversationDto, MessageDto } from "../types/domain.js";
+import type { ConversationDto, MessageDto, ShopStatsDto } from "../types/domain.js";
 
 const secret = "test-secret-with-enough-length";
 
@@ -55,6 +55,18 @@ function fakeService() {
             }
           ]
         : [],
+    getConversationStats: async (): Promise<ShopStatsDto> => ({
+      shopCount: 1,
+      retentionDays: 60,
+      deletedExpiredCount: 1,
+      shops: [
+        {
+          id: "conv-1",
+          name: "川味小厨",
+          latestUpdatedAt: "2026-01-01T00:00:00.000Z"
+        }
+      ]
+    }),
     listMessages: async (): Promise<MessageDto[] | null> => [
       {
         id: "msg-1",
@@ -135,6 +147,28 @@ describe("conversations routes", () => {
 
     expect(res.status).toBe(200);
     expect(await res.json()).toEqual([]);
+  });
+
+  it("returns shop stats and cleanup result for authenticated users", async () => {
+    const app = buildApp();
+
+    const res = await app.request("/api/conversations/stats", {
+      headers: { Authorization: `Bearer ${await token()}` }
+    });
+
+    expect(res.status).toBe(200);
+    expect(await res.json()).toEqual({
+      shopCount: 1,
+      retentionDays: 60,
+      deletedExpiredCount: 1,
+      shops: [
+        {
+          id: "conv-1",
+          name: "川味小厨",
+          latestUpdatedAt: "2026-01-01T00:00:00.000Z"
+        }
+      ]
+    });
   });
 
   it("returns 404 for missing conversation messages", async () => {

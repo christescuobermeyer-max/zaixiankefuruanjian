@@ -5,6 +5,7 @@ import {
   deleteConversation,
   listConversations,
   listMessages,
+  getConversationStats,
   searchConversations
 } from "./conversation-service.js";
 import type { ConversationDocument, MessageDocument } from "../types/domain.js";
@@ -83,6 +84,14 @@ function matchesQueryValue(actual: unknown, expected: unknown): boolean {
     const regexQuery = expected as { $regex: string; $options?: string };
     return new RegExp(regexQuery.$regex, regexQuery.$options).test(String(actual));
   }
+  if (expected && typeof expected === "object" && "$lt" in expected) {
+    const ltQuery = expected as { $lt: Date };
+    return actual instanceof Date && actual < ltQuery.$lt;
+  }
+  if (expected && typeof expected === "object" && "$in" in expected) {
+    const inQuery = expected as { $in: unknown[] };
+    return inQuery.$in.some((item) => String(item) === String(actual));
+  }
   return String(actual) === String(expected);
 }
 
@@ -131,6 +140,54 @@ describe("conversation service", () => {
     const results = await searchConversations(store, "user-1", "   ");
 
     expect(results).toEqual([]);
+  });
+
+  it("counts current user's active shops and deletes conversations idle for more than 60 days", async () => {
+    const { conversations, messages, store } = buildStore();
+    const activeId = new ObjectId();
+    const recentId = new ObjectId();
+    const expiredId = new ObjectId();
+    const otherExpiredId = new ObjectId();
+    conversations.items.push(
+      doc("user-1", "川味小厨", new Date("2026-06-20"), activeId),
+      doc("user-1", "粤式茶餐厅", new Date("2026-05-15"), recentId),
+      doc("user-1", "过期炸鸡店", new Date("2026-04-01"), expiredId),
+      doc("user-2", "其他账户过期店", new Date("2026-04-01"), otherExpiredId)
+    );
+    messages.items.push(
+      message("user-1", activeId, "user", "active", new Date("2026-06-20")),
+      message("user-1", expiredId, "user", "expired", new Date("2026-04-01")),
+      message("user-2", otherExpiredId, "user", "other", new Date("2026-04-01"))
+    );
+
+    const stats = await getConversationStats(store, "user-1", {
+      now: new Date("2026-06-28T00:00:00.000Z"),
+      retentionDays: 60
+    });
+
+    expect(stats).toEqual({
+      shopCount: 2,
+      retentionDays: 60,
+      deletedExpiredCount: 1,
+      shops: [
+        {
+          id: activeId.toHexString(),
+          name: "川味小厨",
+          latestUpdatedAt: "2026-06-20T00:00:00.000Z"
+        },
+        {
+          id: recentId.toHexString(),
+          name: "粤式茶餐厅",
+          latestUpdatedAt: "2026-05-15T00:00:00.000Z"
+        }
+      ]
+    });
+    expect(conversations.items.map((item) => item.name)).toEqual([
+      "川味小厨",
+      "粤式茶餐厅",
+      "其他账户过期店"
+    ]);
+    expect(messages.items.map((item) => item.content)).toEqual(["active", "other"]);
   });
 
   it("returns messages only when the conversation belongs to user", async () => {
