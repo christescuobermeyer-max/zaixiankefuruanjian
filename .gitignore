@@ -33,6 +33,12 @@ bja.sealos.run_*
 *_ed25519
 id_*
 
+# Tauri updater signing keys (never commit the private key)
+.tauri-keys/
+
+# Runtime output (logs, playwright artifacts)
+output/
+
 # Logs and local state
 *.log
 npm-debug.log*

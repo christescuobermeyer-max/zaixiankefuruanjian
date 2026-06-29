@@ -1,0 +1,39 @@
+{
+  "name": "desktop",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "scripts\\tauri-dev.cmd",
+    "desktop:before-dev": "scripts\\before-dev.cmd",
+    "web:dev": "vite --host 127.0.0.1 --port 5173",
+    "dev:tauri": "tauri dev",
+    "tauri": "tauri",
+    "tauri:build": "tauri build",
+    "release": "node scripts/release.mjs",
+    "build": "tsc -p tsconfig.json && vite build",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@tauri-apps/api": "^2.11.1",
+    "@tauri-apps/plugin-process": "^2.3.1",
+    "@tauri-apps/plugin-updater": "^2.10.1",
+    "@vitejs/plugin-react": "^5.1.2",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "vite": "^8.1.0"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2.11.4",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/node": "^24.10.2",
+    "@types/react": "^18.3.27",
+    "@types/react-dom": "^18.3.7",
+    "ali-oss": "^6.23.0",
+    "jsdom": "^27.3.0",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.15"
+  }
+}
