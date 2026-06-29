@@ -28,6 +28,11 @@ target/
 初始需求
 初始/
 
+# SSH private keys for cloud server (never commit)
+bja.sealos.run_*
+*_ed25519
+id_*
+
 # Logs and local state
 *.log
 npm-debug.log*

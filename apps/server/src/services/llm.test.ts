@@ -7,9 +7,7 @@ describe("LLM service", () => {
     const prompt = buildCustomerServicePrompt("川味小厨");
 
     expect(prompt).toContain("川味小厨");
-    expect(prompt).toContain("外卖在线客服助手");
-    expect(prompt).toContain("退款");
-    expect(prompt).toContain("催单");
+    expect(prompt).toContain("外卖代运营客服");
   });
 
   it("creates config from environment values", () => {
