@@ -219,6 +219,16 @@ function accountInitial(displayName: string | undefined) {
   return trimmed ? Array.from(trimmed)[0] : "账";
 }
 
+function TypingDots() {
+  return (
+    <span className="typing-dots" role="status" aria-label="正在生成回复">
+      <span />
+      <span />
+      <span />
+    </span>
+  );
+}
+
 function ChatArea(props: {
   conversation: Conversation | null;
   streaming: StreamingReply | null;
@@ -226,6 +236,17 @@ function ChatArea(props: {
   setInput: (value: string) => void;
   onSend: (forced?: string) => void;
 }) {
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const messageCount = props.conversation?.messages.length ?? 0;
+  const streamingText = props.streaming?.text ?? "";
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (el) {
+      el.scrollTop = el.scrollHeight;
+    }
+  }, [messageCount, streamingText, props.streaming !== null, props.conversation?.id]);
+
   if (!props.conversation) {
     return (
       <main className="chat-main">
@@ -248,15 +269,21 @@ function ChatArea(props: {
         </div>
       </header>
 
-      <div className="message-list" data-scroll="1">
+      <div className="message-list" data-scroll="1" ref={scrollRef}>
         {props.conversation.messages.map((message) => (
           <MessageBubble key={message.id} message={message} />
         ))}
         {props.streaming && (
           <div className="message message-assistant message-streaming" aria-live="polite">
             <div className="message-bubble">
-              {props.streaming.text || "正在生成回复"}
-              <span className="streaming-caret" />
+              {props.streaming.text ? (
+                <>
+                  {props.streaming.text}
+                  <span className="streaming-caret" />
+                </>
+              ) : (
+                <TypingDots />
+              )}
             </div>
             <small>{props.streaming.t}</small>
           </div>

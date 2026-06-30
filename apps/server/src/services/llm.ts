@@ -18,9 +18,14 @@ export function createLlmConfig(env: EnvLike = process.env): LlmConfig {
   return { baseURL, apiKey, model };
 }
 
-// 把模型回复折叠成单段：去掉换行和空行造成的分段，避免群里显示成假假的好几段。
+// 把模型回复折叠成单段：去掉换行和空行造成的分段，避免群里显示成假假的好几段；
+// 同时剥离开头的 @提及 和"老板"称谓，让回复直接进入正文。
 export function normalizeReply(content: string): string {
-  return content.replace(/[ \t]*\r?\n\s*/g, "").trim();
+  const single = content.replace(/[ \t]*\r?\n\s*/g, "").trim();
+  return single
+    .replace(/^(?:@[^\s,，:：]+[\s,，:：]*)+/, "")
+    .replace(/^(?:各位)?老板[娘们]?[\s,，:：]+/, "")
+    .trimStart();
 }
 
 export async function completeWithLlm(input: {
