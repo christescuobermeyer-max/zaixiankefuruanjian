@@ -1,6 +1,6 @@
 [package]
 name = "zaixiankefu_desktop"
-version = "0.1.5"
+version = "0.1.6"
 description = "外卖在线客服助手桌面端"
 authors = ["zaixiankefu"]
 license = ""

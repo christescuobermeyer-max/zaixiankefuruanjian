@@ -57,14 +57,14 @@ describe("Tauri desktop preview configuration", () => {
     expect(libRs).toContain("generate_handler![reveal_panel, hide_panel, move_hidden_button]");
   });
 
-  it("styles the hidden top button as a rounded green AI customer-service capsule", () => {
+  it("styles the hidden top button as a soft-green AI customer-service capsule with avatar and chevron", () => {
     const css = readFileSync(join(process.cwd(), "src", "App.css"), "utf-8");
 
     expect(css).toContain("border-radius: 999px");
-    expect(css).toContain("linear-gradient(135deg, #22c55e 0%, #16a34a 48%, #15803d 100%)");
-    expect(css).toContain("background: transparent");
+    expect(css).toContain("linear-gradient(158deg, #ecf8e5 0%, #f4fcf1 54%, #e2f3da 100%)");
+    expect(css).toContain(".hidden-pill-avatar");
     expect(css).toContain(".hidden-pill-label");
-    expect(css).toContain(".hidden-pill-grip");
+    expect(css).toContain(".hidden-pill-go");
   });
 
   it("lets the expanded chat panel fill the whole native window without an outer frame", () => {
