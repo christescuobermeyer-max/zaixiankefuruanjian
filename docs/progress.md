@@ -8,11 +8,12 @@
 - 本次初始化创建项目级 `AGENTS.md`、标准 harness 文档、约束验证配置、脚本入口和环境变量占位文件。
 - 本次初始化建立 `apps/server`、`apps/desktop`、`scripts` 和 pnpm workspace 边界。
 - 已新增 `docs/backend-development.md`，把当前阶段范围收敛到后端 API、MongoDB、Supabase Auth/JWT、LLM 流式接口和云服务器部署。
-- 桌面端已上线并接入 Tauri 自动更新（OSS `zaixiankefu/`），当前版本 0.1.5。
-- 迭代记录（详见 `docs/memory/2026-06-30-1529-ux-replies-quit-and-release.md`）：
+- 桌面端已上线并接入 Tauri 自动更新（OSS `zaixiankefu/`），当前版本 0.1.6。
+- 迭代记录（详见 `docs/memory/2026-06-30-1529-ux-replies-quit-and-release.md`、`docs/memory/2026-06-30-1555-hidden-button-redesign.md`）：
   - 客服回复优化为简短单段、去除空行分段、去掉 `@老板`/称谓（prompt + `normalizeReply` 兜底，已部署云端）。
   - 标题栏新增「退出软件」按钮（`exit(0)`，0.1.4）。
   - 聊天区随消息/流式输出自动滚动；生成中显示 `TypingDots` 加载动画替代固定文本（0.1.5）。
+  - 隐藏按钮 UI 按原型还原为浅绿玻璃胶囊 + 笑脸头像 + 圆形箭头（0.1.6）。
 - 构建/发布操作要点见同一 memory：桌面构建需用 VS 2022 Community 的 `vcvars64.bat`（VS 18 Insiders 工具集 include 为空会失败）；后端经 `tar+scp+pm2 restart` 部署到 Sealos（非 git 仓库）。
 
 ## 进行中
