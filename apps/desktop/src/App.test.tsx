@@ -108,6 +108,11 @@ function installFetchMock() {
   return fetchMock;
 }
 
+async function typeValidCredentials() {
+  await userEvent.type(screen.getByLabelText("邮箱"), "admin@example.com");
+  await userEvent.type(screen.getByLabelText("密码"), "demo-password");
+}
+
 describe("App prototype replica", () => {
   let fetchMock: ReturnType<typeof installFetchMock>;
 
@@ -150,6 +155,19 @@ describe("App prototype replica", () => {
     expect(screen.getByText("登录后即可使用 AI 客服对话")).toBeInTheDocument();
     expect(screen.getByLabelText("邮箱")).toBeInTheDocument();
     expect(screen.getByLabelText("密码")).toBeInTheDocument();
+  });
+
+  it("opens the login panel with a blank email field and the configured image logo", async () => {
+    render(<App />);
+
+    await userEvent.click(screen.getByRole("button", { name: /AI客服/ }));
+
+    expect(screen.getByLabelText("邮箱")).toHaveValue("");
+    const logos = screen.getAllByRole("img", { name: "外卖在线客服助手 logo" });
+    expect(logos).toHaveLength(2);
+    logos.forEach((logo) => {
+      expect(logo).toHaveAttribute("src", "/customer-service-logo.png");
+    });
   });
 
   it("reveals from hover only after a short intent delay", () => {
@@ -246,6 +264,10 @@ describe("App prototype replica", () => {
 
     await userEvent.click(screen.getByRole("button", { name: /AI客服/ }));
     await userEvent.click(screen.getByRole("button", { name: "登 录" }));
+    expect(screen.getByText("请输入邮箱")).toBeInTheDocument();
+
+    await userEvent.type(screen.getByLabelText("邮箱"), "admin@example.com");
+    await userEvent.click(screen.getByRole("button", { name: "登 录" }));
     expect(screen.getByText("请输入密码")).toBeInTheDocument();
 
     await userEvent.type(screen.getByLabelText("密码"), "demo-password");
@@ -277,9 +299,7 @@ describe("App prototype replica", () => {
     render(<App />);
 
     await userEvent.click(screen.getByRole("button", { name: /AI客服/ }));
-    await userEvent.clear(screen.getByLabelText("邮箱"));
-    await userEvent.type(screen.getByLabelText("邮箱"), "admin@example.com");
-    await userEvent.type(screen.getByLabelText("密码"), "demo-password");
+    await typeValidCredentials();
     await userEvent.click(screen.getByRole("button", { name: "登 录" }));
 
     await screen.findByRole("button", { name: /新建对话/ });
@@ -353,7 +373,7 @@ describe("App prototype replica", () => {
     render(<App />);
 
     await userEvent.click(screen.getByRole("button", { name: /AI客服/ }));
-    await userEvent.type(screen.getByLabelText("密码"), "demo-password");
+    await typeValidCredentials();
     fetchMock.mockImplementationOnce(async () => jsonResponse({ access_token: "jwt-1" }));
     fetchMock.mockImplementationOnce(async () => jsonResponse({ error: "Failed to fetch conversations" }, { status: 500 }));
 
@@ -364,11 +384,27 @@ describe("App prototype replica", () => {
     expect(screen.queryByRole("button", { name: /新建对话/ })).not.toBeInTheDocument();
   });
 
+  it("explains that the backend is unreachable when login succeeds but API loading cannot connect", async () => {
+    render(<App />);
+
+    await userEvent.click(screen.getByRole("button", { name: /AI客服/ }));
+    await typeValidCredentials();
+    fetchMock.mockImplementationOnce(async () => jsonResponse({ access_token: "jwt-1" }));
+    fetchMock.mockImplementationOnce(async () => {
+      throw new TypeError("Failed to fetch");
+    });
+
+    await userEvent.click(screen.getByRole("button", { name: "登 录" }));
+
+    expect(await screen.findByText("后端服务连接失败，请检查网络或服务器配置")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "登 录" })).toBeInTheDocument();
+  });
+
   it("searches conversations and opens the new conversation modal", async () => {
     render(<App />);
 
     await userEvent.click(screen.getByRole("button", { name: /AI客服/ }));
-    await userEvent.type(screen.getByLabelText("密码"), "demo-password");
+    await typeValidCredentials();
     await userEvent.click(screen.getByRole("button", { name: "登 录" }));
     await screen.findByRole("button", { name: /新建对话/ });
 
@@ -395,7 +431,7 @@ describe("App prototype replica", () => {
     render(<App />);
 
     await userEvent.click(screen.getByRole("button", { name: /AI客服/ }));
-    await userEvent.type(screen.getByLabelText("密码"), "demo-password");
+    await typeValidCredentials();
     await userEvent.click(screen.getByRole("button", { name: "登 录" }));
     await screen.findByText("催单");
 
@@ -413,7 +449,7 @@ describe("App prototype replica", () => {
     render(<App />);
 
     await userEvent.click(screen.getByRole("button", { name: /AI客服/ }));
-    await userEvent.type(screen.getByLabelText("密码"), "demo-password");
+    await typeValidCredentials();
     await userEvent.click(screen.getByRole("button", { name: "登 录" }));
     await screen.findByRole("button", { name: /新建对话/ });
 
@@ -439,7 +475,7 @@ describe("App prototype replica", () => {
     render(<App />);
 
     await userEvent.click(screen.getByRole("button", { name: /AI客服/ }));
-    await userEvent.type(screen.getByLabelText("密码"), "demo-password");
+    await typeValidCredentials();
     await userEvent.click(screen.getByRole("button", { name: "登 录" }));
     await screen.findByRole("button", { name: /新建对话/ });
 
@@ -457,7 +493,7 @@ describe("App prototype replica", () => {
     render(<App />);
 
     await userEvent.click(screen.getByRole("button", { name: /AI客服/ }));
-    await userEvent.type(screen.getByLabelText("密码"), "demo-password");
+    await typeValidCredentials();
     await userEvent.click(screen.getByRole("button", { name: "登 录" }));
     await screen.findByText("幸福麻辣烫");
 
@@ -470,3 +506,4 @@ describe("App prototype replica", () => {
     expect(screen.queryByText("幸福麻辣烫")).not.toBeInTheDocument();
   });
 });
+

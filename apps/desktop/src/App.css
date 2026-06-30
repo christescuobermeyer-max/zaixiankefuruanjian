@@ -205,13 +205,10 @@ textarea {
 .app-mark {
   width: 27px;
   height: 27px;
-  border-radius: 8px;
-  background: var(--accent);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #fff;
   flex: none;
+  border-radius: 8px;
+  object-fit: cover;
+  display: block;
 }
 
 .titlebar-title {
@@ -264,6 +261,11 @@ textarea {
   background: var(--accent-soft);
 }
 
+.title-btn-danger:hover {
+  color: #fff;
+  background: var(--danger);
+}
+
 .login-view {
   flex: 1;
   display: flex;
@@ -281,15 +283,12 @@ textarea {
 }
 
 .login-logo {
-  width: 54px;
-  height: 54px;
-  border-radius: 15px;
-  background: var(--accent);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #fff;
-  box-shadow: 0 8px 18px rgba(22, 163, 74, 0.28);
+  width: 72px;
+  height: 72px;
+  border-radius: 18px;
+  object-fit: cover;
+  display: block;
+  box-shadow: 0 8px 18px rgba(22, 163, 74, 0.18);
 }
 
 .login-card h1 {

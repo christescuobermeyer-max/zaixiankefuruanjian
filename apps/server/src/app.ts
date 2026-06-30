@@ -1,5 +1,6 @@
 import { Hono } from "hono";
 import { authMiddleware } from "./middleware/auth.js";
+import { corsMiddleware } from "./middleware/cors.js";
 import { createChatRoute } from "./routes/chat.js";
 import { createConversationsRoute } from "./routes/conversations.js";
 import { healthRoute } from "./routes/health.js";
@@ -16,6 +17,7 @@ export function createApp(options: CreateAppOptions = {}) {
   const app = new Hono();
 
   app.route("/", healthRoute);
+  app.use("/api/*", corsMiddleware());
   app.use(
     "/api/*",
     authMiddleware({

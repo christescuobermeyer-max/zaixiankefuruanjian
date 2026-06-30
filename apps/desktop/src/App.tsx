@@ -9,15 +9,18 @@ import {
   type ApiMessage,
   type ApiShopStats
 } from "./api";
-import { ChatIcon, CheckIcon, CopyIcon, EyeIcon, EyeOffIcon, MinusIcon, PinIcon, SearchIcon, SendIcon, TrashIcon } from "./icons";
+import { exit } from "@tauri-apps/plugin-process";
+import { CheckIcon, CloseIcon, CopyIcon, EyeIcon, EyeOffIcon, MinusIcon, PinIcon, SearchIcon, SendIcon, TrashIcon } from "./icons";
 import { clearLoginPreferences, loadLoginPreferences, saveLoginPreferences } from "./authPreferences";
 import { copyToClipboard } from "./clipboard";
-import { checkAndInstallUpdate, type UpdateStatus } from "./updater";
+import { checkAndInstallUpdate, isTauriRuntime, type UpdateStatus } from "./updater";
 import { type Conversation, type Message } from "./prototypeData";
 import { filterConversations, formatClock } from "./prototypeLogic";
 
 const HOVER_REVEAL_DELAY_MS = 520;
 const DRAG_REVEAL_SUPPRESS_MS = 260;
+const APP_LOGO_SRC = "/customer-service-logo.png";
+const APP_LOGO_ALT = "外卖在线客服助手 logo";
 
 type StreamingReply = {
   conversationId: string;
@@ -43,9 +46,7 @@ function LoginView(props: {
   return (
     <div className="login-view">
       <div className="login-card">
-        <div className="login-logo">
-          <ChatIcon width="28" height="28" strokeWidth="1.8" />
-        </div>
+        <img className="login-logo" src={APP_LOGO_SRC} alt={APP_LOGO_ALT} />
         <h1>外卖在线客服助手</h1>
         <p>登录后即可使用 AI 客服对话</p>
 
@@ -439,7 +440,7 @@ export default function App() {
   const [authed, setAuthed] = useState(false);
   const [authToken, setAuthToken] = useState<string | null>(null);
   const [account, setAccount] = useState<AuthSession | null>(null);
-  const [email, setEmail] = useState("xuxikai886@kefu.com");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [rememberPassword, setRememberPasswordState] = useState(true);
@@ -533,6 +534,13 @@ export default function App() {
     setPanel("hidden");
     setPinned(false);
     void invoke("hide_panel").catch(() => undefined);
+  }
+
+  function quitApp() {
+    if (!isTauriRuntime()) {
+      return;
+    }
+    void exit(0);
   }
 
   function beginHoverReveal() {
@@ -659,7 +667,7 @@ export default function App() {
       setLoggingIn(false);
     } catch (error) {
       setLoggingIn(false);
-      setLoginErr(error instanceof Error ? error.message : "登录失败，请稍后重试");
+      setLoginErr(loginErrorMessage(error));
     }
   }
 
@@ -823,9 +831,7 @@ export default function App() {
         }}>
           <div className="panel">
             <div className="titlebar">
-              <div className="app-mark">
-                <ChatIcon width="15" height="15" strokeWidth="1.9" />
-              </div>
+              <img className="app-mark" src={APP_LOGO_SRC} alt={APP_LOGO_ALT} />
               <div className="titlebar-title">外卖在线客服助手</div>
               <span className="online-badge">
                 <span />
@@ -837,6 +843,9 @@ export default function App() {
                 </button>
                 <button className="title-btn" title="隐藏面板" onClick={hideNow}>
                   <MinusIcon width="16" height="16" strokeWidth="2" />
+                </button>
+                <button className="title-btn title-btn-danger" title="退出软件" onClick={quitApp}>
+                  <CloseIcon width="16" height="16" strokeWidth="2" />
                 </button>
               </div>
             </div>
@@ -929,4 +938,11 @@ export default function App() {
       )}
     </div>
   );
+}
+
+function loginErrorMessage(error: unknown) {
+  if (error instanceof Error && error.message === "Failed to fetch") {
+    return "后端服务连接失败，请检查网络或服务器配置";
+  }
+  return error instanceof Error ? error.message : "登录失败，请稍后重试";
 }

@@ -101,6 +101,23 @@ describe("chat service", () => {
     expect(conversations.items[0].tokenCount).toBeGreaterThan(0);
   });
 
+  it("formats multiline assistant answers as valid SSE data lines", async () => {
+    const { store, conversationId } = buildStore();
+    const service = createChatService({
+      store,
+      streamCompletion: async () => "第一行\n第二行",
+      summarize: async () => "summary"
+    });
+
+    const res = await service.streamChat({
+      userId: "user-1",
+      conversationId: conversationId.toHexString(),
+      message: "帮我催单"
+    });
+
+    expect(await res.text()).toContain("data: 第一行\ndata: 第二行\n\n");
+  });
+
   it("returns 404 when conversation does not belong to user", async () => {
     const { store, conversationId } = buildStore();
     const service = createChatService({

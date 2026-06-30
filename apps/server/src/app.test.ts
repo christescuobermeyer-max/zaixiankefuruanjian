@@ -13,6 +13,39 @@ async function token() {
 }
 
 describe("createApp", () => {
+  it("allows desktop development origin to call API routes with authorization headers", async () => {
+    const app = createApp({ jwtSecret });
+
+    const res = await app.request("/api/conversations", {
+      method: "OPTIONS",
+      headers: {
+        Origin: "http://127.0.0.1:5173",
+        "Access-Control-Request-Method": "POST",
+        "Access-Control-Request-Headers": "authorization,content-type"
+      }
+    });
+
+    expect(res.status).toBe(204);
+    expect(res.headers.get("Access-Control-Allow-Origin")).toBe("http://127.0.0.1:5173");
+    expect(res.headers.get("Access-Control-Allow-Headers")).toContain("Authorization");
+    expect(res.headers.get("Access-Control-Allow-Methods")).toContain("POST");
+  });
+
+  it("does not allow arbitrary browser origins", async () => {
+    const app = createApp({ jwtSecret });
+
+    const res = await app.request("/api/conversations", {
+      method: "OPTIONS",
+      headers: {
+        Origin: "https://evil.example",
+        "Access-Control-Request-Method": "POST",
+        "Access-Control-Request-Headers": "authorization,content-type"
+      }
+    });
+
+    expect(res.headers.get("Access-Control-Allow-Origin")).toBeNull();
+  });
+
   it("protects API routes with auth middleware", async () => {
     const app = createApp({ jwtSecret });
 

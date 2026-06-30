@@ -26,21 +26,27 @@ function readPkgVersion() {
 }
 
 // 在 NSIS 输出目录里找 .exe 安装包及其 .sig 签名文件。
-function findWindowsArtifact(version) {
-  const bundleDir = join(desktopRoot, "src-tauri", "target", "release", "bundle", "nsis");
+export function findWindowsArtifact(version, bundleDir = join(desktopRoot, "src-tauri", "target", "release", "bundle", "nsis")) {
   if (!existsSync(bundleDir)) {
     return null;
   }
   const files = readdirSync(bundleDir);
-  const installer = files.find((f) => f.endsWith("-setup.exe"));
-  const sig = files.find((f) => f.endsWith("-setup.exe.sig"));
+  const installer = files.find((f) => f.endsWith("-setup.exe") && fileMatchesVersion(f, version));
+  const sig = installer ? `${installer}.sig` : null;
   if (!installer || !sig) {
+    return null;
+  }
+  if (!files.includes(sig)) {
     return null;
   }
   return {
     installerPath: join(bundleDir, installer),
     signature: readFileSync(join(bundleDir, sig), "utf-8").trim()
   };
+}
+
+function fileMatchesVersion(file, version) {
+  return file.includes(`_${version}_`) || file.includes(`-${version}-`);
 }
 
 function requireEnv(name) {

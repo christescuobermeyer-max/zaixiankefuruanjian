@@ -68,7 +68,7 @@ describe("Tauri desktop preview configuration", () => {
   });
 
   it("lets the expanded chat panel fill the whole native window without an outer frame", () => {
-    const css = readFileSync(join(process.cwd(), "src", "App.css"), "utf-8");
+    const css = readFileSync(join(process.cwd(), "src", "App.css"), "utf-8").replace(/\r\n/g, "\n");
 
     expect(css).toContain(".panel-mover {\n  position: absolute;\n  inset: 0;");
     expect(css).toContain(".panel {\n  position: relative;\n  width: 100%;\n  height: 100%;");

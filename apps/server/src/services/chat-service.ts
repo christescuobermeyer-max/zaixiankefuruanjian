@@ -84,9 +84,16 @@ export function createChatService(options: ChatServiceOptions) {
         }
       );
 
-      return new Response(`data: ${answer}\n\ndata: [DONE]\n\n`, {
+      return new Response(`${formatSseData(answer)}data: [DONE]\n\n`, {
         headers: { "Content-Type": "text/event-stream; charset=utf-8" }
       });
     }
   };
+}
+
+function formatSseData(value: string) {
+  return `${value
+    .split(/\r?\n/)
+    .map((line) => `data: ${line}`)
+    .join("\n")}\n\n`;
 }

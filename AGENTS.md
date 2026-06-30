@@ -23,6 +23,7 @@
 - [前端 UI 设计](docs/前端UI设计文档.md)
 
 ## 硬约束
+- 每次回复都必须使用中文回复。
 - MVP 只做 Windows 桌面助手、邮箱密码登录、命名对话、文本流式客服、MongoDB 持久化、上下文压缩和 OSS 自动更新；不做移动端、语音、图片、多租户或本地模型。
 - 客户端不得接触 LLM Key、MongoDB URI、OSS Secret、Supabase service token 或 system prompt；服务端密钥只从环境变量或受控 secret 读取。
 - 所有后端用户数据查询必须按 Supabase `sub` 派生的 `userId` 做资源级隔离。

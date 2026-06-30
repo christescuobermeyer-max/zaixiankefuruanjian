@@ -18,6 +18,11 @@ export function createLlmConfig(env: EnvLike = process.env): LlmConfig {
   return { baseURL, apiKey, model };
 }
 
+// 把模型回复折叠成单段：去掉换行和空行造成的分段，避免群里显示成假假的好几段。
+export function normalizeReply(content: string): string {
+  return content.replace(/[ \t]*\r?\n\s*/g, "").trim();
+}
+
 export async function completeWithLlm(input: {
   systemPrompt: string;
   summary: string;
@@ -50,5 +55,5 @@ export async function completeWithLlm(input: {
   const json = (await response.json()) as {
     choices?: Array<{ message?: { content?: string } }>;
   };
-  return json.choices?.[0]?.message?.content ?? "";
+  return normalizeReply(json.choices?.[0]?.message?.content ?? "");
 }

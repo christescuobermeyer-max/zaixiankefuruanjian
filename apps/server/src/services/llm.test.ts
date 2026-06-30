@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { buildCustomerServicePrompt } from "../prompts/customer-service.js";
-import { createLlmConfig } from "./llm.js";
+import { createLlmConfig, normalizeReply } from "./llm.js";
 
 describe("LLM service", () => {
   it("builds a customer-service system prompt with shop name", () => {
@@ -22,5 +22,14 @@ describe("LLM service", () => {
       apiKey: "test-key",
       model: "gemini-3.1-flash-lite"
     });
+  });
+
+  it("collapses multi-paragraph replies into a single continuous message", () => {
+    const reply = normalizeReply("这个问题我们已经在看了。\n\n  \n后续做完会同步给您。");
+    expect(reply).toBe("这个问题我们已经在看了。后续做完会同步给您。");
+  });
+
+  it("trims surrounding whitespace and keeps a single-line reply intact", () => {
+    expect(normalizeReply("  单量后续会持续稳定递增的  ")).toBe("单量后续会持续稳定递增的");
   });
 });
