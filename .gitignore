@@ -49,3 +49,9 @@ yarn-error.log*
 Thumbs.db
 .idea/
 .vscode/
+
+# 本地参考素材 / 设计稿，不纳入版本控制
+/AI客服prompt/
+/AI客服按钮原型 (离线版).html
+/Image 1.png
+/前端ui原型图/
